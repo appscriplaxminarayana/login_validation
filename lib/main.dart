@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:ramp_up/Screen/login_screen.dart';
+
+import 'package:ramp_up/app/screens/login/login_screen.dart';
 
 void main() {
   runApp(MyApp());

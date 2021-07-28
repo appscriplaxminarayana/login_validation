@@ -2,9 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ramp_up/Controller/login_controller.dart';
-import 'package:ramp_up/Screen/home_screen.dart';
+import 'package:ramp_up/app/screens/login/login_controller.dart';
 import 'package:ramp_up/constants.dart';
+
+import 'package:ramp_up/app/screens/home/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
