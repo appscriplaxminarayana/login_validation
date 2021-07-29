@@ -27,77 +27,89 @@ class LoginScreen extends StatelessWidget {
             child: Form(
               key: _formKey,
               child: Obx(
-                () => Column(
-                  children: [
-                    const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
+                () => SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextFormField(
-                      validator: (value) {
-                        if (value!.isNotEmpty) {
-                          return null;
-                        }
-                        return 'E-mail can not be empty';
-                      },
-                      onChanged: (email) {
-                        loginController.emailValidation(email: email);
-                      },
-                      controller: emailTextController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
-                        hintText: 'Enter email',
+                      TextFormField(
+                        onChanged: (email) {
+                          loginController.emailValidation(email: email);
+                        },
+                        controller: emailTextController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          errorText:
+                              loginController.emailErrorText.value.isEmpty
+                                  ? null
+                                  : loginController.emailErrorText.value,
+                          border: const OutlineInputBorder(),
+                          labelText: 'Email',
+                          hintText: 'Enter email',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: defaultPadding),
-                    TextFormField(
-                      validator: (value) {
-                        if (value!.isNotEmpty) {
-                          return null;
-                        }
-                        return 'passowrd can not be empty';
-                      },
-                      onChanged: (password) {
-                        loginController.passwordValidation(password: password);
-                      },
-                      controller: passwordTextController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
-                        hintText: 'Enter Password',
+                      const SizedBox(height: defaultPadding),
+                      TextFormField(
+                        onChanged: (password) {
+                          loginController.passwordValidation(
+                            password: password,
+                          );
+                        },
+                        controller: passwordTextController,
+                        decoration: InputDecoration(
+                          errorText:
+                              loginController.passwordErrorText.value.isEmpty
+                                  ? null
+                                  : loginController.passwordErrorText.value,
+                          errorStyle: const TextStyle(height: 0),
+                          border: const OutlineInputBorder(),
+                          labelText: 'Password',
+                          hintText: 'Enter Password',
+                        ),
                       ),
-                    ),
-                    ...List.generate(
-                      loginController.infos.length,
-                      (index) => InfoWidget(
-                        isTrue: loginController.infos[index]['status'] as bool,
-                        infoText:
-                            loginController.infos[index]['info'] as String,
+                      const SizedBox(
+                        height: defaultPadding,
                       ),
-                    ).toList(),
-                    ElevatedButton(
-                      onPressed: loginController.infos
-                              .any((info) => info['status'] == false)
-                          ? null
-                          : () {
-                              final snackBar = const SnackBar(
-                                  content: Text('Password is wrong!'));
-                              if (passwordTextController.text != password) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                                FocusScope.of(context).unfocus();
-                              } else {
-                                Get.off<dynamic>(() => const HomeScreen());
-                              }
-                            },
-                      child: const Text('Login'),
-                    )
-                  ],
+                      if (loginController.infos
+                          .any((info) => info['status'] == false))
+                        if (loginController.passwordErrorText.value != '')
+                          ...List.generate(
+                            loginController.infos.length,
+                            (index) => InfoWidget(
+                              isTrue: loginController.infos[index]['status']
+                                  as bool,
+                              infoText: loginController.infos[index]['info']
+                                  as String,
+                            ),
+                          ).toList(),
+                      const SizedBox(
+                        height: defaultPadding,
+                      ),
+                      ElevatedButton(
+                        onPressed: loginController.infos
+                                    .any((info) => info['status'] == false) ||
+                                loginController.emailErrorText.value.isNotEmpty
+                            ? null
+                            : () {
+                                final snackBar = const SnackBar(
+                                    content: Text('Password is wrong!'));
+                                if (passwordTextController.text != password) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                  FocusScope.of(context).unfocus();
+                                } else {
+                                  Get.off<dynamic>(() => const HomeScreen());
+                                }
+                              },
+                        child: const Text('Login'),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -121,15 +133,15 @@ class InfoWidget extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              Icons.check,
-              color: isTrue! ? Colors.green : Colors.grey.shade500,
+              isTrue! ? Icons.check_circle : Icons.warning_rounded,
+              color: isTrue! ? Colors.green : Colors.red.shade500,
             ),
             const SizedBox(width: defaultPadding / 2),
             Expanded(
               child: Text(
                 infoText!,
                 style: TextStyle(
-                  color: isTrue! ? Colors.green : Colors.grey.shade500,
+                  color: isTrue! ? Colors.green : Colors.red.shade500,
                 ),
               ),
             ),
